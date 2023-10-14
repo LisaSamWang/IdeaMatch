@@ -7,7 +7,7 @@ import streamlit as st
 import json
 from google.oauth2 import service_account
 import googleapiclient.discovery
-
+# import toml
 # Fetch idea submissions data from Google Sheets
 def fetch_google_sheets_data():
     try:
@@ -23,9 +23,19 @@ def fetch_google_sheets_data():
         # creds = ServiceAccountCredentials.from_json_keyfile_name(
         #     "ideamatch-402003-87cc447222eb.json", scope)
         google_creds = json.loads(st.secrets["google"]["creds"])
+        # Load TOML
+        # config = toml.load("creds.toml")
+
+        # # Parse JSON from TOML
+        # google_creds = json.loads(config["google"]["creds"])
+
 
         # Use credentials to access Google Sheets API
-        creds = service_account.Credentials.from_service_account_info(google_creds, scopes=["https://www.googleapis.com/auth/spreadsheets"])
+        creds = service_account.Credentials.from_service_account_info(google_creds,     scopes=[
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
+    ])
+        
         service = googleapiclient.discovery.build('sheets', 'v4', credentials=creds)
         # Authorize client
         client = gspread.authorize(creds)
